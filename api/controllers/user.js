@@ -5,10 +5,8 @@ const jwt = require("jsonwebtoken");
 ENV.config();
 
 exports.singIn=(req,res)=>{
-    console.log(req.body.cin)
-    console.log(req.body.password)
+
     client.query(`SELECT * FROM etudiants  where cin=${req.body.cin}`, async function  (err, result) {
-        console.log(result)
         if(err){
             res.status(res.statusCode).json({
               message: err.message,
@@ -83,7 +81,6 @@ exports.singUp=(req,res)=>{
             const heure=date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
  
             const fullfdate=datee+" "+heure
-            console.log(fullfdate)
             if(result.length==0){
                 client.query(`INSERT  INTO  etudiants (date,cin,code_fac,email,moyenne_bac,nom,password,pays,prenom,tel,type_bac) 
                 VALUES('${fullfdate}',${req.body.cin},'${req.body.code_fac}','${req.body.email}','${req.body.moyenne_bac}','${req.body.nom}','${hasdhedPassword}','${req.body.pays}','${req.body.prenom}','${req.body.tel}','${req.body.type_bac}') `, function  (err, result) {
@@ -139,17 +136,18 @@ exports.getUserData=(req,res)=>{
 }
 
 exports.updateUserInfo=(req,res)=>{
-  const email =req.body.email;
-  const motdepasse=req.body.motdepasse;
-  const tel=req.body.tel;
-  let queryString=`${email!=undefined?"email="+"'"+email+"'":''} ${motdepasse!=undefined?"motdepasse="+"'"+motdepasse+"'":''} ${tel!=undefined?"tel="+"'"+tel+"'":''}`
+  const code_fac =req.body.code_fac;
+
+  let queryString=`${code_fac!=undefined?"code_fac="+"'"+code_fac+"'":''}`
   for(let i =0;i<queryString.length-1;i++){
     if(queryString[i]==" "&&queryString[i+1]!=" "&&queryString[0]!=" "){
       queryString=queryString.replace(" ",",")
     }
    }
 
-  let query=`UPDATE etudiants SET ${queryString} where id='${req.verified.user_auth.id_membre}'`;
+   console.log(queryString)
+   console.log(req.verified.user_auth)
+  let query=`UPDATE etudiants SET ${queryString} where id='${req.verified.user_auth.id_etud}'`;
   client.query(query ,(err,result)=>{
     if (err){
       res.status(res.statusCode).json({

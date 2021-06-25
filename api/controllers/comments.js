@@ -1,8 +1,7 @@
 var client = require('../../db_connection')
 
 exports.getComments=(req,res)=>{
-
-    client.query(`SELECT commentaire.etudiants_id as owner ,description,id_comment,nom as firstname,prenom as lastname FROM commentaire  join etudiants on etudiants.id=commentaire.etudiants_id WHERE  facultes_id=${req.body.facultes_id} `, async function  (err, result) {
+    client.query(`SELECT commentaire.date as date, commentaire.etudiants_id as owner ,description,id_comment,nom as firstname,prenom as lastname FROM commentaire  join etudiants on etudiants.id=commentaire.etudiants_id  WHERE  facultes_id=${req.body.facultes_id} ORDER BY commentaire.date asc`, async function  (err, result) {
         if(err){
             res.status(res.statusCode).json({
               message: err.message,
@@ -20,8 +19,11 @@ exports.getComments=(req,res)=>{
         )
 }
 exports.addComment=(req,res)=>{
-
-    client.query(`INSERT INTO  commentaire (description,etudiants_id,facultes_id) VALUES('${req.body.description}','${req.verified.user_auth.id_etud}','${req.body.facultes_id}')`, async function  (err, result) {
+  const date = new Date();
+  const datee=date.getFullYear()+"-"+(date.getMonth()+1-0)+"-"+date.getDate();
+  const heure=date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+  const fullfdate=datee+" "+heure
+    client.query(`INSERT INTO  commentaire (date,description,etudiants_id,facultes_id) VALUES('${fullfdate}','${req.body.description}','${req.verified.user_auth.id_etud}','${req.body.facultes_id}')`, async function  (err, result) {
         if(err){
             res.status(res.statusCode).json({
               message: err.message,
@@ -38,7 +40,6 @@ exports.addComment=(req,res)=>{
         )
 }
 exports.deleteComments=(req,res)=>{
-
     client.query(`DELETE commentaire FROM commentaire   WHERE etudiants_id=${req.verified.user_auth.id_etud} and id_comment=${req.body.id_comment}`,(err,resuldelCommen)=>{
         if (err){
             res.status(res.statusCode).json({
@@ -65,7 +66,6 @@ exports.SearchComment=(req,res)=>{
           state: false,
         });
       }else{
-
         res.status(res.statusCode).json({
             message: "One universities",
             data:result,

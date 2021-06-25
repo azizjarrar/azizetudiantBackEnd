@@ -1,7 +1,7 @@
 var client = require('../../db_connection')
 
 exports.getuniversities=(req,res)=>{
-  console.log(req.body.specialites)
+
   if(req.body.specialites==undefined){
     client.query(`SELECT * FROM facultes `, async function  (err, result) {
       if(err){

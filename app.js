@@ -1,13 +1,11 @@
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
-const dotenv = require('dotenv');
-dotenv.config();
 var client = require('./db_connection');
-const path = require('path');
 const user_route = require('./api/routes/user')
 const universities_route = require('./api/routes/universities')
 const comments_route = require('./api/routes/comments')
+/*****connecte to data base**** */
   client.connect(function(err) {
     if (err){
         console.log(err.message)
@@ -30,11 +28,11 @@ const comments_route = require('./api/routes/comments')
     }
     next()
   })
-  app.use(express.urlencoded({extended: true}));  
-  app.use(express.json())
-  
-  app.use(morgan('dev'))
+  app.use(express.urlencoded({extended: true}));//  
+  app.use(express.json())//  
 
+  app.use(morgan('dev'))
+  
   app.use('/user', user_route)
   app.use('/universities', universities_route)
   app.use('/comments', comments_route)
